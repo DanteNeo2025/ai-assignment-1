@@ -71,3 +71,5 @@ reports/
 
 # Optional REPL history
 .node_repl_history
+
+raw_images/
