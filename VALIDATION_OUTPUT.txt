@@ -1,0 +1,95 @@
+﻿
+> anime-character-image-collector@1.0.0 validate-images
+> ts-node src/validate-images.ts
+
+?? ??撽?撌脖?頛??憤閫??...
+
+
+?? 瑼Ｘ??: FEMALE
+  ?? 瑼Ｘ摮?憿? mages
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 348/578 images valid
+    ??????: 348/578 (60%)
+    ???⊥???:
+      - anime_female_mage_robe_hat_001.jpg: No character presence indicators found
+      - anime_female_mage_robe_hat_002.jpg: No character presence indicators found
+      - anime_female_mage_robe_hat_003.jpg: No character presence indicators found
+      - anime_female_mage_robe_hat_004.jpg: No character presence indicators found
+      - anime_female_mage_robe_hat_005.jpg: No character presence indicators found
+      ... ?? 225 ?????  ?? 瑼Ｘ摮?憿? professionals
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 299/516 images valid
+    ??????: 299/516 (58%)
+    ???⊥???:
+      - anime_female_doctor_coat_001.jpg: No character presence indicators found
+      - anime_female_doctor_coat_002.jpg: No character presence indicators found
+      - anime_female_doctor_coat_003.jpg: No character presence indicators found
+      - anime_female_doctor_coat_004.jpg: No character presence indicators found
+      - anime_female_doctor_coat_005.jpg: No character presence indicators found
+      ... ?? 212 ?????  ?? 瑼Ｘ摮?憿? students
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 583/583 images valid
+    ??????: 583/583 (100%)
+  ?? 瑼Ｘ摮?憿? warriors
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 578/578 images valid
+    ??????: 578/578 (100%)
+
+?? 瑼Ｘ??: MALE
+  ?? 瑼Ｘ摮?憿? mages
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 231/435 images valid
+    ??????: 231/435 (53%)
+    ???⊥???:
+      - anime_male_mage_robe_magic_001.jpg: No character presence indicators found
+      - anime_male_mage_robe_magic_002.jpg: No character presence indicators found
+      - anime_male_mage_robe_magic_003.jpg: No character presence indicators found
+      - anime_male_mage_robe_magic_004.jpg: No character presence indicators found
+      - anime_male_mage_robe_magic_005.jpg: No character presence indicators found
+      ... ?? 199 ?????  ?? 瑼Ｘ摮?憿? professionals
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 143/322 images valid
+    ??????: 143/322 (44%)
+    ???⊥???:
+      - anime_male_chef_uniform_001.jpg: No character presence indicators found
+      - anime_male_chef_uniform_002.jpg: No character presence indicators found
+      - anime_male_chef_uniform_003.jpg: No character presence indicators found
+      - anime_male_chef_uniform_004.jpg: No character presence indicators found
+      - anime_male_chef_uniform_005.jpg: No character presence indicators found
+      ... ?? 174 ?????  ?? 瑼Ｘ摮?憿? students
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 374/491 images valid
+    ??????: 374/491 (76%)
+    ???⊥???:
+      - anime_male_high_school_student_001.jpg: No character presence indicators found
+      - anime_male_high_school_student_002.jpg: No character presence indicators found
+      - anime_male_high_school_student_003.jpg: No character presence indicators found
+      - anime_male_high_school_student_004.jpg: No character presence indicators found
+      - anime_male_high_school_student_005.jpg: No character presence indicators found
+      ... ?? 112 ?????  ?? 瑼Ｘ摮?憿? warriors
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 599/599 images valid
+    ??????: 599/599 (100%)
+
+?? 瑼Ｘ??: SPECIAL
+  ?? 瑼Ｘ摮?憿? angels
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 150/150 images valid
+    ??????: 150/150 (100%)
+  ?? 瑼Ｘ摮?憿? catgirls
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 200/200 images valid
+    ??????: 200/200 (100%)
+  ?? 瑼Ｘ摮?憿? demons
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 150/150 images valid
+    ??????: 150/150 (100%)
+  ?? 瑼Ｘ摮?憿? elves
+2025-11-16 04:29:26 [32minfo[39m: [ImageValidation] Validation complete: 150/150 images valid
+    ??????: 150/150 (100%)
+
+============================================================
+?? 撽?蝮賜??勗?
+============================================================
+蝮賢???? 4752
+????: 3805 (80%)
+?⊥???: 947 (20%)
+
+???⊥???蝯梯?:
+  - No character presence indicators found: 947 撘?(100%)
+
+? ?寥脣遣霅?
+  ? 蝻箏?鈭箇?內嚗遣霅堆?
+     - ?券??萄?銝剜溶??"character", "person", "figure"
+     - 雿輻?游擃?鈭箇?膩閰?
+
+??撽?摰?嚗?
