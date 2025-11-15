@@ -1,0 +1,344 @@
+import { Browser, Page, chromium } from 'playwright';
+// Using native fetch instead of axios
+import * as fs from 'fs';
+import * as path from 'path';
+import { Logger } from './logger';
+
+/**
+ * Interface for image data collected from web scraping
+ */
+export interface ImageData {
+  url: string;
+  altText?: string;
+  keyword: string;
+  category?: string;
+}
+
+/**
+ * Configuration for the ImageScraper
+ */
+export interface ScraperConfig {
+  headless?: boolean;
+  maxImages?: number;
+  delay?: number;
+  timeout?: number;
+  userAgent?: string;
+  outputDir?: string;
+}
+
+/**
+ * ImageScraper class for collecting anime character images from Google Images
+ * Uses Playwright for browser automation and handles JavaScript-rendered content
+ */
+export class ImageScraper {
+  private browser: Browser | null = null;
+  private page: Page | null = null;
+  private logger: Logger;
+  private config: Required<ScraperConfig>;
+
+  constructor(config: ScraperConfig = {}) {
+    this.config = {
+      headless: config.headless ?? true,
+      maxImages: config.maxImages ?? 100,
+      delay: config.delay ?? 1000,
+      timeout: config.timeout ?? 30000,
+      userAgent: config.userAgent ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+      outputDir: config.outputDir ?? './images'
+    };
+    
+    this.logger = new Logger('ImageScraper');
+    this.ensureOutputDirectory();
+  }
+
+  /**
+   * Initialize the browser and page
+   */
+  async initialize(): Promise<void> {
+    try {
+      this.browser = await chromium.launch({
+        headless: this.config.headless,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu'
+        ]
+      });
+
+      this.page = await this.browser.newPage({
+        userAgent: this.config.userAgent,
+        viewport: { width: 1920, height: 1080 }
+      });
+
+      // Set extra headers to appear more like a real browser
+      await this.page.setExtraHTTPHeaders({
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+      });
+
+      this.logger.info('Browser initialized successfully');
+    } catch (error) {
+      this.logger.error('Failed to initialize browser:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Search for images using Google Images
+   * @param keyword - Search term for anime characters
+   * @param category - Category of the character (optional)
+   * @returns Array of ImageData objects
+   */
+  async searchImages(keyword: string, category?: string): Promise<ImageData[]> {
+    if (!this.page) {
+      throw new Error('Browser not initialized. Call initialize() first.');
+    }
+
+    this.logger.info(`Searching images for keyword: "${keyword}"`);
+    
+    try {
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&tbm=isch&safe=off&hl=en`;
+      await this.page.goto(searchUrl, { waitUntil: 'networkidle' });
+      
+      // Wait for images to load
+      await this.page.waitForSelector('img[data-src], img[src]', { timeout: this.config.timeout });
+      
+      // Scroll to load more images
+      await this.scrollToLoadImages();
+      
+      // Extract image data
+      const imageData = await this.extractImageData(keyword, category);
+      
+      this.logger.info(`Found ${imageData.length} images for keyword: "${keyword}"`);
+      return imageData.slice(0, this.config.maxImages);
+      
+    } catch (error) {
+      this.logger.error(`Failed to search images for keyword "${keyword}":`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Scroll the page to trigger lazy loading of more images
+   */
+  private async scrollToLoadImages(): Promise<void> {
+    if (!this.page) return;
+
+    let previousImageCount = 0;
+    let stableCount = 0;
+    const maxStableCount = 3;
+    
+    while (stableCount < maxStableCount) {
+      // Scroll to bottom
+      await this.page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      
+      // Wait for new content to load
+      await this.page.waitForTimeout(this.config.delay);
+      
+      // Check if "Show more results" button exists and click it
+      try {
+        const showMoreButton = await this.page.locator('input[value*="Show more"], button:has-text("Show more results")').first();
+        if (await showMoreButton.isVisible()) {
+          await showMoreButton.click();
+          await this.page.waitForTimeout(2000);
+        }
+      } catch (error) {
+        // Button not found or not clickable, continue
+      }
+      
+      // Count current images
+      const currentImageCount = await this.page.locator('img[data-src], img[src]').count();
+      
+      if (currentImageCount === previousImageCount) {
+        stableCount++;
+      } else {
+        stableCount = 0;
+        previousImageCount = currentImageCount;
+      }
+      
+      this.logger.debug(`Current image count: ${currentImageCount}`);
+    }
+    
+    this.logger.info(`Finished scrolling. Total images found: ${previousImageCount}`);
+  }
+
+  /**
+   * Extract image data from the current page
+   */
+  private async extractImageData(keyword: string, category?: string): Promise<ImageData[]> {
+    if (!this.page) return [];
+
+    return await this.page.evaluate((evalKeyword: string, evalCategory?: string) => {
+      const images: any[] = [];
+      const imageElements = document.querySelectorAll('img');
+      
+      imageElements.forEach((img: HTMLImageElement) => {
+        const src = img.src || (img as any).dataset.src;
+        if (!src || src.startsWith('data:')) return;
+        
+        // Filter out small images and icons
+        if (img.naturalWidth < 100 || img.naturalHeight < 100) return;
+        
+        // Skip Google's own images
+        if (src.includes('gstatic.com') || src.includes('google.com/logos')) return;
+        
+        const altText = img.alt || img.title || '';
+        
+        images.push({
+          url: src,
+          altText: altText.trim(),
+          keyword: evalKeyword,
+          category: evalCategory
+        });
+      });
+      
+      return images;
+    }, keyword, category);
+  }
+
+  /**
+   * Download an image from URL
+   * @param imageData - Image data containing URL and metadata
+   * @param filename - Local filename to save the image
+   * @returns Promise<boolean> - Success status
+   */
+    async downloadImage(imageData: ImageData, filename: string): Promise<boolean> {
+    try {
+      const response = await fetch(imageData.url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': this.config.userAgent,
+          'Referer': 'https://www.google.com/',
+          'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+        }
+      });
+
+      if (!response.ok) {
+        this.logger.warn(`Failed to download image: HTTP ${response.status} for ${imageData.url}`);
+        return false;
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      const filePath = path.join(this.config.outputDir, filename);
+      await fs.promises.writeFile(filePath, buffer);
+      
+      this.logger.debug(`Downloaded image: ${filename}`);
+      return true;
+      
+    } catch (error) {
+      this.logger.error(`Failed to download image ${imageData.url}:`, error);
+      return false;
+    }
+  }
+      });
+
+      if (response.status !== 200) {
+        this.logger.warn(`Failed to download image: HTTP ${response.status} for ${imageData.url}`);
+        return false;
+      }
+
+      const filePath = path.join(this.config.outputDir, filename);
+      await fs.promises.writeFile(filePath, response.data);
+      
+      this.logger.debug(`Downloaded image: ${filename}`);
+      return true;
+      
+    } catch (error) {
+      this.logger.error(`Failed to download image ${imageData.url}:`, error);
+      return false;
+    }
+  }
+
+  /**
+   * Batch download images
+   * @param imageDataArray - Array of image data to download
+   * @param startIndex - Starting index for filename generation
+   * @returns Promise<string[]> - Array of successfully downloaded filenames
+   */
+  async batchDownload(imageDataArray: ImageData[], startIndex: number = 0): Promise<string[]> {
+    const downloadedFiles: string[] = [];
+    
+    for (let i = 0; i < imageDataArray.length; i++) {
+      const imageData = imageDataArray[i];
+      const filename = this.generateFilename(imageData.keyword, startIndex + i);
+      
+      const success = await this.downloadImage(imageData, filename);
+      if (success) {
+        downloadedFiles.push(filename);
+      }
+      
+      // Add delay between downloads to be respectful to servers
+      if (i < imageDataArray.length - 1) {
+        await this.sleep(Math.random() * 1000 + 500); // Random delay 500-1500ms
+      }
+    }
+    
+    this.logger.info(`Downloaded ${downloadedFiles.length}/${imageDataArray.length} images`);
+    return downloadedFiles;
+  }
+
+  /**
+   * Generate a filename for the image
+   */
+  private generateFilename(keyword: string, index: number): string {
+    const sanitizedKeyword = keyword.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const timestamp = Date.now();
+    return `${sanitizedKeyword}_${String(index).padStart(4, '0')}_${timestamp}.jpg`;
+  }
+
+  /**
+   * Ensure output directory exists
+   */
+  private ensureOutputDirectory(): void {
+    if (!fs.existsSync(this.config.outputDir)) {
+      fs.mkdirSync(this.config.outputDir, { recursive: true });
+      this.logger.info(`Created output directory: ${this.config.outputDir}`);
+    }
+  }
+
+  /**
+   * Sleep for specified milliseconds
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Get current configuration
+   */
+  getConfig(): Required<ScraperConfig> {
+    return { ...this.config };
+  }
+
+  /**
+   * Update configuration
+   */
+  updateConfig(newConfig: Partial<ScraperConfig>): void {
+    this.config = { ...this.config, ...newConfig };
+  }
+
+  /**
+   * Close the browser and cleanup resources
+   */
+  async close(): Promise<void> {
+    if (this.browser) {
+      await this.browser.close();
+      this.browser = null;
+      this.page = null;
+      this.logger.info('Browser closed successfully');
+    }
+  }
+
+  /**
+   * Destructor to ensure resources are cleaned up
+   */
+  async destroy(): Promise<void> {
+    await this.close();
+  }
+}

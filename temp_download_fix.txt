@@ -1,0 +1,28 @@
+  async downloadImage(imageData: ImageData, filename: string): Promise<boolean> {
+    try {
+      const response = await fetch(imageData.url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': this.config.userAgent,
+          'Referer': 'https://www.google.com/',
+          'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+        }
+      });
+
+      if (!response.ok) {
+        this.logger.warn(`Failed to download image: HTTP ${response.status} for ${imageData.url}`);
+        return false;
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      const filePath = path.join(this.config.outputDir, filename);
+      await fs.promises.writeFile(filePath, buffer);
+      
+      this.logger.debug(`Downloaded image: ${filename}`);
+      return true;
+      
+    } catch (error) {
+      this.logger.error(`Failed to download image ${imageData.url}:`, error);
+      return false;
+    }
+  }

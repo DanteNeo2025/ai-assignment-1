@@ -1,0 +1,168 @@
+{
+  "tables": [
+    {
+      "name": "images",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primaryKey": true,
+          "autoIncrement": true,
+          "comment": "Unique identifier for each image"
+        },
+        {
+          "name": "url",
+          "type": "TEXT",
+          "nullable": false,
+          "unique": true,
+          "comment": "Source URL of the image"
+        },
+        {
+          "name": "alt_text",
+          "type": "TEXT",
+          "nullable": true,
+          "comment": "Alternative text from img tag"
+        },
+        {
+          "name": "filename",
+          "type": "TEXT",
+          "nullable": false,
+          "unique": true,
+          "comment": "Local filename of downloaded image"
+        },
+        {
+          "name": "file_path",
+          "type": "TEXT",
+          "nullable": false,
+          "comment": "Full local file path"
+        },
+        {
+          "name": "file_size",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "File size in bytes"
+        },
+        {
+          "name": "width",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "Image width in pixels"
+        },
+        {
+          "name": "height",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "Image height in pixels"
+        },
+        {
+          "name": "keyword",
+          "type": "TEXT",
+          "nullable": false,
+          "comment": "Search keyword used to find this image"
+        },
+        {
+          "name": "category",
+          "type": "TEXT",
+          "nullable": true,
+          "comment": "Character category (male, female, profession, etc.)"
+        },
+        {
+          "name": "download_date",
+          "type": "DATETIME",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "When the image was downloaded"
+        },
+        {
+          "name": "processed",
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": false,
+          "comment": "Whether image has been processed"
+        },
+        {
+          "name": "processing_date",
+          "type": "DATETIME",
+          "nullable": true,
+          "comment": "When the image was processed"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_keyword",
+          "columns": ["keyword"]
+        },
+        {
+          "name": "idx_category",
+          "columns": ["category"]
+        },
+        {
+          "name": "idx_processed",
+          "columns": ["processed"]
+        }
+      ]
+    },
+    {
+      "name": "collection_stats",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        {
+          "name": "keyword",
+          "type": "TEXT",
+          "nullable": false,
+          "comment": "Search keyword"
+        },
+        {
+          "name": "total_found",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "Total images found for keyword"
+        },
+        {
+          "name": "downloaded",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "Successfully downloaded images"
+        },
+        {
+          "name": "processed",
+          "type": "INTEGER",
+          "nullable": false,
+          "comment": "Successfully processed images"
+        },
+        {
+          "name": "failed_downloads",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "comment": "Failed download attempts"
+        },
+        {
+          "name": "failed_processing",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "comment": "Failed processing attempts"
+        },
+        {
+          "name": "collection_date",
+          "type": "DATETIME",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_keyword_stats",
+          "columns": ["keyword"]
+        }
+      ]
+    }
+  ],
+  "relationships": []
+}

@@ -1,0 +1,42 @@
+{
+  "name": "anime-character-image-collector",
+  "version": "1.0.0",
+  "description": "Automated anime character image dataset collection and processing system",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
+  },
+  "keywords": [
+    "image-collection",
+    "anime-characters",
+    "web-scraping",
+    "image-processing",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/jest": "^29.5.5",
+    "@types/sqlite3": "^3.1.8",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "sharp": "^0.32.6",
+    "sqlite3": "^5.1.6",
+    "winston": "^3.10.0",
+    "fs-extra": "^11.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
