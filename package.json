@@ -13,7 +13,9 @@
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "validate-images": "ts-node src/validate-images.ts",
+    "validate": "npm run validate-images"
   },
   "keywords": [
     "image-collection",

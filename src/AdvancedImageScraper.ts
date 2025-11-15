@@ -242,6 +242,18 @@ export class AdvancedImageScraper {
       // 基於 alt 文本的相關度評分
       const altLower = img.altText.toLowerCase();
       const keywordLower = keywordData.keyword.toLowerCase();
+      const imgUrlLower = img.url.toLowerCase();
+      
+      // 🚫 嚴格排除：只有衣服/物品而無人物的圖片
+      if (this.isClothingOnlyImage(altLower, imgUrlLower)) {
+        img.relevanceScore = 0.0; // 直接排除
+        return img;
+      }
+      
+      // ✅ 人物角色檢測加分
+      if (this.hasCharacterIndicators(altLower, imgUrlLower)) {
+        score += 0.15; // 有明確人物指示加分
+      }
       
       // 關鍵字匹配加分
       if (altLower.includes(keywordLower.split(' ')[0])) score += 0.1;
@@ -258,13 +270,79 @@ export class AdvancedImageScraper {
       }
       
       // URL 相關度評分
-      const urlLower = img.url.toLowerCase();
-      if (urlLower.includes('anime')) score += 0.05;
-      if (urlLower.includes('character')) score += 0.03;
+      if (imgUrlLower.includes('anime')) score += 0.05;
+      if (imgUrlLower.includes('character')) score += 0.03;
       
       img.relevanceScore = Math.min(score, 1.0); // 最高 1.0
       return img;
     }).filter(img => img.relevanceScore >= this.config.relevanceThreshold);
+  }
+
+  /**
+   * 檢測是否為僅衣服/物品圖片 (無人物)
+   */
+  private isClothingOnlyImage(altText: string, url: string): boolean {
+    const clothingOnlyKeywords = [
+      'outfit only', 'clothing only', 'costume only', 'dress only',
+      'uniform only', 'outfit without', 'clothing without',
+      'just outfit', 'just clothing', 'just costume',
+      'empty outfit', 'empty costume', 'empty dress',
+      'outfit design', 'clothing design', 'costume design',
+      'pattern', 'texture', 'fabric',
+      'mannequin', 'hanger', 'display'
+    ];
+    
+    const urlClothingKeywords = [
+      'outfit-only', 'clothing-only', 'costume-only',
+      'pattern', 'texture', 'design-only',
+      'mannequin', 'display'
+    ];
+    
+    // 檢查 alt 文本
+    for (const keyword of clothingOnlyKeywords) {
+      if (altText.includes(keyword)) return true;
+    }
+    
+    // 檢查 URL
+    for (const keyword of urlClothingKeywords) {
+      if (url.includes(keyword)) return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * 檢測是否包含人物角色指示
+   */
+  private hasCharacterIndicators(altText: string, url: string): boolean {
+    const characterKeywords = [
+      'girl', 'boy', 'woman', 'man', 'character',
+      'person', 'people', 'human', 'figure',
+      'face', 'portrait', 'body', 'full body',
+      'standing', 'sitting', 'pose', 'posing',
+      'smile', 'smiling', 'expression',
+      'hair', 'eyes', 'skin',
+      'anime girl', 'anime boy', 'anime character',
+      'manga character', 'waifu', 'husbando'
+    ];
+    
+    const urlCharacterKeywords = [
+      'character', 'girl', 'boy', 'anime-girl', 'anime-boy',
+      'person', 'people', 'human', 'figure',
+      'portrait', 'face'
+    ];
+    
+    // 檢查 alt 文本
+    for (const keyword of characterKeywords) {
+      if (altText.includes(keyword)) return true;
+    }
+    
+    // 檢查 URL
+    for (const keyword of urlCharacterKeywords) {
+      if (url.includes(keyword)) return true;
+    }
+    
+    return false;
   }
 
   /**

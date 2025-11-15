@@ -25,10 +25,10 @@ export const ANIME_CHARACTER_CATEGORIES: CategoryConfig[] = [
     folder: "female/students",
     description: "女學生動漫角色",
     keywords: [
-      { keyword: "anime schoolgirl uniform", category: "female", subcategory: "student", targetCount: 200, relevanceScore: 0.95 },
-      { keyword: "anime girl school uniform sailor", category: "female", subcategory: "student", targetCount: 150, relevanceScore: 0.92 },
-      { keyword: "anime high school girl uniform", category: "female", subcategory: "student", targetCount: 150, relevanceScore: 0.94 },
-      { keyword: "anime girl student bag backpack", category: "female", subcategory: "student", targetCount: 100, relevanceScore: 0.90 }
+      { keyword: "anime schoolgirl character uniform", category: "female", subcategory: "student", targetCount: 200, relevanceScore: 0.95 },
+      { keyword: "anime girl student character sailor", category: "female", subcategory: "student", targetCount: 150, relevanceScore: 0.92 },
+      { keyword: "anime high school girl character", category: "female", subcategory: "student", targetCount: 150, relevanceScore: 0.94 },
+      { keyword: "anime student girl figure backpack", category: "female", subcategory: "student", targetCount: 100, relevanceScore: 0.90 }
     ]
   },
   
@@ -38,10 +38,10 @@ export const ANIME_CHARACTER_CATEGORIES: CategoryConfig[] = [
     folder: "female/warriors",
     description: "女戰士/冒險者角色",
     keywords: [
-      { keyword: "anime girl warrior armor sword", category: "female", subcategory: "warrior", targetCount: 200, relevanceScore: 0.93 },
-      { keyword: "anime female knight armor", category: "female", subcategory: "warrior", targetCount: 150, relevanceScore: 0.94 },
-      { keyword: "anime girl adventurer fantasy", category: "female", subcategory: "warrior", targetCount: 150, relevanceScore: 0.91 },
-      { keyword: "anime female paladin holy", category: "female", subcategory: "warrior", targetCount: 100, relevanceScore: 0.90 }
+      { keyword: "anime girl warrior character armor", category: "female", subcategory: "warrior", targetCount: 200, relevanceScore: 0.93 },
+      { keyword: "anime female knight character armor", category: "female", subcategory: "warrior", targetCount: 150, relevanceScore: 0.94 },
+      { keyword: "anime girl adventurer character fantasy", category: "female", subcategory: "warrior", targetCount: 150, relevanceScore: 0.91 },
+      { keyword: "anime female paladin character holy", category: "female", subcategory: "warrior", targetCount: 100, relevanceScore: 0.90 }
     ]
   },
 
@@ -90,10 +90,10 @@ export const ANIME_CHARACTER_CATEGORIES: CategoryConfig[] = [
     folder: "male/warriors",
     description: "男戰士/冒險者角色", 
     keywords: [
-      { keyword: "anime boy warrior sword armor", category: "male", subcategory: "warrior", targetCount: 200, relevanceScore: 0.94 },
-      { keyword: "anime male knight heavy armor", category: "male", subcategory: "warrior", targetCount: 150, relevanceScore: 0.93 },
-      { keyword: "anime boy adventurer fantasy", category: "male", subcategory: "warrior", targetCount: 150, relevanceScore: 0.91 },
-      { keyword: "anime male samurai katana", category: "male", subcategory: "warrior", targetCount: 120, relevanceScore: 0.95 }
+      { keyword: "anime boy warrior character sword", category: "male", subcategory: "warrior", targetCount: 200, relevanceScore: 0.94 },
+      { keyword: "anime male knight character armor", category: "male", subcategory: "warrior", targetCount: 150, relevanceScore: 0.93 },
+      { keyword: "anime boy adventurer character fantasy", category: "male", subcategory: "warrior", targetCount: 150, relevanceScore: 0.91 },
+      { keyword: "anime male samurai character katana", category: "male", subcategory: "warrior", targetCount: 120, relevanceScore: 0.95 }
     ]
   },
 
@@ -130,9 +130,9 @@ export const ANIME_CHARACTER_CATEGORIES: CategoryConfig[] = [
     description: "特殊類型角色",
     keywords: [
       { keyword: "anime catgirl nekomimi ears", category: "special", subcategory: "catgirl", targetCount: 200, relevanceScore: 0.96 },
-      { keyword: "anime angel wings halo", category: "special", subcategory: "angel", targetCount: 150, relevanceScore: 0.94 },
-      { keyword: "anime demon horns wings", category: "special", subcategory: "demon", targetCount: 150, relevanceScore: 0.93 },
-      { keyword: "anime elf pointed ears", category: "special", subcategory: "elf", targetCount: 150, relevanceScore: 0.95 }
+      { keyword: "anime angel girl character wings", category: "special", subcategory: "angel", targetCount: 150, relevanceScore: 0.94 },
+      { keyword: "anime demon girl character horns", category: "special", subcategory: "demon", targetCount: 150, relevanceScore: 0.93 },
+      { keyword: "anime elf girl character ears", category: "special", subcategory: "elf", targetCount: 150, relevanceScore: 0.95 }
     ]
   }
 ];
